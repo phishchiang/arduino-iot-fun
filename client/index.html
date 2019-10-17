@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Phish IOT FUNNN</title>
+</head>
+<body>
+  <h1>TEST</h1>
+  <form action="">
+    <input id="m" autocomplete="off" />
+    <button class="mybtn" onclick="clickEvt()">Click me</button>
+  </form>
+  <h2 id="somebody"></h2>
+  <script src="../socket.io/socket.io.js"></script>
+  <script>
+    let socket = io.connect();
+    
+    
+    const clickEvt = () => {
+      let data = document.querySelector('#m').value ;
+      event.preventDefault();
+      socket.emit('chat message', `${socket.id} : ${data}`);
+      document.querySelector('#m').value = '';
+    }
+
+
+    socket.on('All', function(data){
+      console.log(data);
+      let newData= data + '<br>';
+      document.querySelector('#somebody').innerHTML += newData ;
+    });
+  </script>
+</body>
+</html>
