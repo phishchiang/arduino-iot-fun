@@ -15,14 +15,12 @@ board.on('ready', function() {
   io.on('connection', function(socket) {
     connections.push(socket);
     console.log(`${socket.id} connected`);
-    socket.on('chat message', function(data) {
-      console.log('message: ' + data);
-      io.emit('All', data);
-    });
 
-    socket.on('IOT', data => {
-      console.log(data);
+    socket.on('IOT_in', data => {
+      console.log(`${socket.id} said : ${data}`);
       led.toggle();
+
+      socket.emit('All', data);
     });
 
     socket.on('disconnect', () => {

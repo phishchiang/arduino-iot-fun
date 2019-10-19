@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import socket from 'socket.io-client';
+import Chat from './Chat';
 
 export default function Form() {
   const [io, setIo] = useState(null);
-  // let ENDPOINT = 'localhost:5000';
-  let ENDPOINT = '192.168.0.108:5000';
+  const [msg, setMsg] = useState('');
+
+  let ENDPOINT = 'localhost:5000';
+  // let ENDPOINT = '192.168.0.108:5000';
 
   const connectWebSocket = () => {
     //開啟
@@ -16,28 +19,32 @@ export default function Form() {
   }, [ENDPOINT]);
 
   const initWebSocket = () => {
+    console.log('this is initWebSocket');
     //對 getMessage 設定監聽，如果 server 有透過 getMessage 傳送訊息，將會在此被捕捉
-    io.on('getMessage', message => {
+    io.on('All', message => {
       console.log(message);
     });
   };
 
-  const onClick = e => {
+  const onChange = e => {
     e.preventDefault();
-    // io.on('leddd', )
-    io.emit('IOT', 'Light!!');
-    console.log('works!!!');
+    setMsg(e.target.value);
+  };
+
+  const onSubmit = e => {
+    e.preventDefault();
+    // console.log(io);
+    io.emit('IOT_in', msg);
   };
 
   return (
     <div>
       <h1>TEST!!!!</h1>
-      <form action="">
-        <input id="m" type="text" />
-        <button className="mybtn" onClick={onClick}>
-          Click Me
-        </button>
+      <form onSubmit={onSubmit}>
+        <input id="m" type="text" onChange={onChange} />
+        <input type="submit" />
       </form>
+      <Chat io={io} />
     </div>
   );
 }
