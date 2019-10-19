@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import socket from 'socket.io-client';
 
 export default function Form() {
-  const [ws, setWs] = useState(null);
-  let ENDPOINT = 'http://localhost:5000';
+  const [io, setIo] = useState(null);
+  // let ENDPOINT = 'localhost:5000';
+  let ENDPOINT = '192.168.0.108:5000';
 
   const connectWebSocket = () => {
     //開啟
-    setWs(io(ENDPOINT));
+    setIo(socket(ENDPOINT));
   };
 
   useEffect(() => {
@@ -16,16 +17,15 @@ export default function Form() {
 
   const initWebSocket = () => {
     //對 getMessage 設定監聽，如果 server 有透過 getMessage 傳送訊息，將會在此被捕捉
-    ws.on('getMessage', message => {
+    io.on('getMessage', message => {
       console.log(message);
     });
   };
 
   const onClick = e => {
     e.preventDefault();
-    if (ws) {
-      console.log(ws);
-    }
+    // io.on('leddd', )
+    io.emit('IOT', 'Light!!');
     console.log('works!!!');
   };
 

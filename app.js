@@ -4,12 +4,31 @@ const io = require('socket.io')(http);
 const path = require('path');
 const cors = require('cors');
 
-var five = require('johnny-five');
-var board = new five.Board();
+const five = require('johnny-five');
+const board = new five.Board();
 
 board.on('ready', function() {
-  var led = new five.Led(13);
-  led.blink(500);
+  const led = new five.Led(13);
+  // led.blink(500);
+  led.toggle();
+
+  io.on('connection', function(socket) {
+    connections.push(socket);
+    console.log(`${socket.id} connected`);
+    socket.on('chat message', function(data) {
+      console.log('message: ' + data);
+      io.emit('All', data);
+    });
+
+    socket.on('IOT', data => {
+      console.log(data);
+      led.toggle();
+    });
+
+    socket.on('disconnect', () => {
+      console.log(`${socket.id} is gone`);
+    });
+  });
 });
 
 app.use(cors());
@@ -19,19 +38,6 @@ connections = [];
 
 app.get('/client', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
-});
-
-io.on('connection', function(socket) {
-  connections.push(socket);
-  console.log(`${socket.id} connected`);
-  socket.on('chat message', function(data) {
-    console.log('message: ' + data);
-    io.emit('All', data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`${socket.id} is gone`);
-  });
 });
 
 http.listen(5000, function() {
