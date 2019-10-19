@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import webSocket from 'socket.io-client';
+import io from 'socket.io-client';
 
 export default function Form() {
   const [ws, setWs] = useState(null);
+  let ENDPOINT = 'http://localhost:5000';
 
   const connectWebSocket = () => {
     //開啟
-    setWs(webSocket('http://localhost:5000'));
+    setWs(io(ENDPOINT));
   };
 
   useEffect(() => {
-    if (ws) {
-      //連線成功在 console 中打印訊息
-      console.log('success connect!');
-      //設定監聽
-      initWebSocket();
-      // connectWebSocket();
-    }
-  }, [ws]);
+    connectWebSocket();
+  }, [ENDPOINT]);
 
   const initWebSocket = () => {
     //對 getMessage 設定監聽，如果 server 有透過 getMessage 傳送訊息，將會在此被捕捉
@@ -28,7 +23,9 @@ export default function Form() {
 
   const onClick = e => {
     e.preventDefault();
-    connectWebSocket();
+    if (ws) {
+      console.log(ws);
+    }
     console.log('works!!!');
   };
 

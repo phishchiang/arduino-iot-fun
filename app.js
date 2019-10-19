@@ -4,6 +4,14 @@ const io = require('socket.io')(http);
 const path = require('path');
 const cors = require('cors');
 
+var five = require('johnny-five');
+var board = new five.Board();
+
+board.on('ready', function() {
+  var led = new five.Led(13);
+  led.blink(500);
+});
+
 app.use(cors());
 
 users = [];
