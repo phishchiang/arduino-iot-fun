@@ -21,7 +21,7 @@ board.on('ready', function() {
       console.log(data);
       led.toggle();
 
-      socket.emit('All', data);
+      io.emit('All', data);
     });
 
     socket.on('disconnect', () => {

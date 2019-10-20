@@ -21,6 +21,9 @@ export default function Form() {
     // console.log(chatContent);
     if (io) {
       io.emit('IOT_in', chatContent);
+      // io.on('All', message => {
+      //   console.log(message);
+      // });
     }
   }, [chatContent]);
 
