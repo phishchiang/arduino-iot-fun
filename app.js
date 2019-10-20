@@ -17,7 +17,8 @@ board.on('ready', function() {
     console.log(`${socket.id} connected`);
 
     socket.on('IOT_in', data => {
-      console.log(`${socket.id} said : ${data}`);
+      // console.log(`${socket.id} said : ${data[0]}`);
+      console.log(data);
       led.toggle();
 
       socket.emit('All', data);
