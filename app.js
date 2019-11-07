@@ -27,11 +27,11 @@ const debounce = (func, wait = 100, immediate = true) => {
 board.on('ready', function() {
   const potentiometer = new five.Sensor('A3');
 
-  potentiometer.on('change', () => {
-    // console.log('  value  : ', potentiometer.value);
-    // debounce(console.log('  value  : ', potentiometer.value));
-    io.emit('All', potentiometer.value);
-  });
+  // potentiometer.on('change', () => {
+  //   // console.log('  value  : ', potentiometer.value);
+  //   // debounce(console.log('  value  : ', potentiometer.value));
+  //   io.emit('All', potentiometer.value);
+  // });
 
   const servo = new five.Servo(10);
   board.repl.inject({

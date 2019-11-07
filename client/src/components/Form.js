@@ -7,7 +7,8 @@ export default function Form() {
   const [chatContent, setChatContent] = useState([]);
 
   const [msg, setMsg] = useState('');
-  const [mouseposi, setMouseposi] = useState([]);
+  const [mouseposi, setMouseposi] = useState([0, 0]);
+  const [touchOn, setTouchOn] = useState(false);
 
   let ENDPOINT = 'localhost:5000';
   // let ENDPOINT = '192.168.0.108:5000';
@@ -70,12 +71,21 @@ export default function Form() {
     ]);
   };
 
+  useEffect(() => {
+    if (io) {
+      io.emit('IOT_in', touchOn);
+    }
+  }, [touchOn]);
+
   const onTouchStart = e => {
-    console.log('Start!!');
+    setTouchOn(true);
+    // console.log(touchOn);
+    // io.emit('IOT_in', touchOn);
   };
 
   const onTouchEnd = e => {
-    console.log('End!!');
+    setTouchOn(false);
+    // io.emit('IOT_in', touchOn);
   };
 
   const debounce = (func, wait = 20, immediate = true) => {
@@ -113,6 +123,7 @@ export default function Form() {
       >
         <div>{`X position : ${mouseposi[0]}`}</div>
         <div>{`Y position : ${mouseposi[1]}`}</div>
+        <div>{`Laser gun : ${touchOn}`}</div>
       </div>
     </Fragment>
   );
