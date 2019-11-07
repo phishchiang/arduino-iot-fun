@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import socket from 'socket.io-client';
-import Chat from './Chat';
+// import Chat from './Chat';
 
 export default function Form() {
   const [io, setIo] = useState(null);
@@ -18,34 +18,25 @@ export default function Form() {
     setIo(socket(ENDPOINT));
   };
 
+  // Handle chatContent of 'IOT_in' emit!!!
   useEffect(() => {
     if (io) {
-      // io.emit('IOT_in', chatContent);
-      console.log('IOT_in' + chatContent);
-      // setChatContent([...chatContent]);
+      io.emit('IOT_in', chatContent);
     }
   }, [chatContent]);
 
+  // Handle 'ALL' listner from the server
   useEffect(() => {
     if (io) {
       io.on('All', message => {
-        // setChatContent([...message]);
         console.log(message);
       });
     }
-  }, []);
+  }, [io]);
 
   useEffect(() => {
     connectWebSocket();
   }, [ENDPOINT]);
-
-  const initWebSocket = () => {
-    console.log('this is initWebSocket');
-    //對 getMessage 設定監聽，如果 server 有透過 getMessage 傳送訊息，將會在此被捕捉
-    io.on('All', message => {
-      // console.log(message);
-    });
-  };
 
   const onChange = e => {
     e.preventDefault();
@@ -56,8 +47,6 @@ export default function Form() {
   const onSubmit = e => {
     e.preventDefault();
     setChatContent([msg, ...chatContent]);
-    // console.log('onSubmit ' + chatContent);
-    console.log(msg);
     io.emit('IOT_in', msg);
   };
 
@@ -71,6 +60,7 @@ export default function Form() {
     ]);
   };
 
+  // Handle touchOn of 'IOT_in' emit!!!
   useEffect(() => {
     if (io) {
       io.emit('IOT_in', touchOn);
@@ -113,7 +103,7 @@ export default function Form() {
           <input type="submit" />
         </form>
 
-        <Chat io={io} chatContent={chatContent} />
+        {/* <Chat io={io} chatContent={chatContent} /> */}
       </div>
       <div
         style={{ backgroundColor: 'red', width: '100vw', height: '250px' }}
