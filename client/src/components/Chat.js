@@ -8,7 +8,7 @@ export default function Chat(props) {
     if (io) {
       // console.log(io);
       io.on('All', message => {
-        setChatContentNew([...message]);
+        // setChatContentNew([...message]);
         console.log(message);
       });
     }
@@ -16,12 +16,11 @@ export default function Chat(props) {
 
   return (
     <div>
-      <h1>Test</h1>
       {/* <button>test BTN</button> */}
       <h2>
-        {chatContentNew.map(item => {
-          return <div key={item}>{item}</div>;
-        })}
+        {/* {chatContentNew.map(item => {
+          return <div key={item.length}>{item}</div>;
+        })} */}
       </h2>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import socket from 'socket.io-client';
 import Chat from './Chat';
 
@@ -7,6 +7,7 @@ export default function Form() {
   const [chatContent, setChatContent] = useState([]);
 
   const [msg, setMsg] = useState('');
+  const [mouseposi, setMouseposi] = useState([]);
 
   let ENDPOINT = 'localhost:5000';
   // let ENDPOINT = '192.168.0.108:5000';
@@ -17,15 +18,21 @@ export default function Form() {
   };
 
   useEffect(() => {
-    // setChatContent([msg, ...chatContent]);
-    // console.log(chatContent);
     if (io) {
-      io.emit('IOT_in', chatContent);
-      // io.on('All', message => {
-      //   console.log(message);
-      // });
+      // io.emit('IOT_in', chatContent);
+      console.log('IOT_in' + chatContent);
+      // setChatContent([...chatContent]);
     }
   }, [chatContent]);
+
+  useEffect(() => {
+    if (io) {
+      io.on('All', message => {
+        // setChatContent([...message]);
+        console.log(message);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     connectWebSocket();
@@ -45,31 +52,68 @@ export default function Form() {
     // console.log(msg);
   };
 
-  const sendIO = () => {
-    io.emit('IOT_in', chatContent);
-  };
-
   const onSubmit = e => {
     e.preventDefault();
-    let newArray = [msg, ...chatContent];
-    setChatContent(newArray);
-    // console.log(chatContent);
-    // io.emit('IOT_in', msg);
+    setChatContent([msg, ...chatContent]);
+    // console.log('onSubmit ' + chatContent);
+    console.log(msg);
+    io.emit('IOT_in', msg);
+  };
+
+  const onMouseMove = e => {
+    // e.preventDefault();
+    // console.log(Math.floor(e.touches[0].clientX));
+    // io.emit('IOT_in', e.clientX);
+    setMouseposi([
+      Math.floor(e.touches[0].clientX),
+      Math.floor(e.touches[0].clientY)
+    ]);
+  };
+
+  const onTouchStart = e => {
+    console.log('Start!!');
+  };
+
+  const onTouchEnd = e => {
+    console.log('End!!');
+  };
+
+  const debounce = (func, wait = 20, immediate = true) => {
+    var timeout;
+    return function() {
+      var context = this,
+        args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
   };
 
   return (
-    <div>
-      <h1>TEST!!!!</h1>
-      <form onSubmit={onSubmit}>
-        <input id="m" type="text" onChange={onChange} />
-        <input type="submit" />
-      </form>
-      {/* <h1>
-        {chatContent.map(item => {
-          return <div key={item}>{item}</div>;
-        })}
-      </h1> */}
-      <Chat io={io} chatContent={chatContent} />
-    </div>
+    <Fragment>
+      <div>
+        <h1>TEST!!!!</h1>
+        <form onSubmit={onSubmit}>
+          <input id="m" type="text" onChange={onChange} />
+          <input type="submit" />
+        </form>
+
+        <Chat io={io} chatContent={chatContent} />
+      </div>
+      <div
+        style={{ backgroundColor: 'red', width: '100vw', height: '250px' }}
+        onTouchStart={onTouchStart}
+        onTouchMove={debounce(onMouseMove)}
+        onTouchEnd={onTouchEnd}
+      >
+        <div>{`X position : ${mouseposi[0]}`}</div>
+        <div>{`Y position : ${mouseposi[1]}`}</div>
+      </div>
+    </Fragment>
   );
 }
