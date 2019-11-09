@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import socket from 'socket.io-client';
 // import Chat from './Chat';
 
@@ -10,13 +10,20 @@ export default function Form() {
   const [mouseposi, setMouseposi] = useState([0, 0]);
   const [touchOn, setTouchOn] = useState(false);
 
-  let ENDPOINT = 'localhost:5000';
-  // let ENDPOINT = '192.168.0.108:5000';
+  const containerRef = useRef(null);
+
+  // let ENDPOINT = 'localhost:5000';
+  // Init Setup
+  let ENDPOINT = '192.168.0.111:5000';
 
   const connectWebSocket = () => {
     //開啟
     setIo(socket(ENDPOINT));
   };
+
+  useEffect(() => {
+    connectWebSocket();
+  }, [ENDPOINT]);
 
   // Handle chatContent of 'IOT_in' emit!!!
   useEffect(() => {
@@ -24,6 +31,13 @@ export default function Form() {
       io.emit('IOT_in', chatContent);
     }
   }, [chatContent]);
+
+  // Handle chatContent of 'IOT_in_02' emit!!!
+  useEffect(() => {
+    if (io) {
+      io.emit('IOT_in_02', mouseposi);
+    }
+  }, [mouseposi]);
 
   // Handle 'ALL' listner from the server
   useEffect(() => {
@@ -34,9 +48,12 @@ export default function Form() {
     }
   }, [io]);
 
+  // Handle touchOn of 'IOT_in' emit!!!
   useEffect(() => {
-    connectWebSocket();
-  }, [ENDPOINT]);
+    if (io) {
+      io.emit('IOT_in', touchOn);
+    }
+  }, [touchOn]);
 
   const onChange = e => {
     e.preventDefault();
@@ -52,20 +69,22 @@ export default function Form() {
 
   const onMouseMove = e => {
     // e.preventDefault();
-    // console.log(Math.floor(e.touches[0].clientX));
+    // console.log(
+    //   ((e.touches[0].clientY - containerRef.current.offsetTop) /
+    //     containerRef.current.clientHeight) *
+    //     180
+    // );
+    // console.log(containerRef.current.clientHeight);
     // io.emit('IOT_in', e.clientX);
     setMouseposi([
-      Math.floor(e.touches[0].clientX),
-      Math.floor(e.touches[0].clientY)
+      Math.floor((e.touches[0].clientX / window.screen.width) * 180),
+      Math.floor(
+        ((e.touches[0].clientY - containerRef.current.offsetTop) /
+          containerRef.current.clientHeight) *
+          180
+      )
     ]);
   };
-
-  // Handle touchOn of 'IOT_in' emit!!!
-  useEffect(() => {
-    if (io) {
-      io.emit('IOT_in', touchOn);
-    }
-  }, [touchOn]);
 
   const onTouchStart = e => {
     setTouchOn(true);
@@ -78,7 +97,7 @@ export default function Form() {
     // io.emit('IOT_in', touchOn);
   };
 
-  const debounce = (func, wait = 20, immediate = true) => {
+  const debounce = (func, wait = 100, immediate = true) => {
     var timeout;
     return function() {
       var context = this,
@@ -107,6 +126,7 @@ export default function Form() {
       </div>
       <div
         style={{ backgroundColor: 'red', width: '100vw', height: '250px' }}
+        ref={containerRef}
         onTouchStart={onTouchStart}
         onTouchMove={debounce(onMouseMove)}
         onTouchEnd={onTouchEnd}
