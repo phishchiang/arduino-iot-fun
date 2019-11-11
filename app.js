@@ -35,8 +35,8 @@ board.on('ready', function() {
     servo_11
   });
 
-  servo_10.to(180);
-  servo_11.to(180);
+  servo_10.to(90);
+  servo_11.to(90);
 
   const led = new five.Led(13);
   // led.blink(500);
@@ -69,7 +69,7 @@ board.on('ready', function() {
     });
 
     socket.on('IOT_in_02', data => {
-      console.log(data[0]);
+      console.log(data[1]);
       servo_10.to(data[0]);
       servo_11.to(data[1]);
     });

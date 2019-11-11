@@ -14,7 +14,7 @@ export default function Form() {
 
   // let ENDPOINT = 'localhost:5000';
   // Init Setup
-  let ENDPOINT = '192.168.0.111:5000';
+  let ENDPOINT = '192.168.0.51:5000';
 
   const connectWebSocket = () => {
     //開啟
@@ -74,14 +74,14 @@ export default function Form() {
     //     containerRef.current.clientHeight) *
     //     180
     // );
-    // console.log(containerRef.current.clientHeight);
+    // console.log((1 - e.touches[0].clientX / window.screen.width) * 180);
     // io.emit('IOT_in', e.clientX);
     setMouseposi([
-      Math.floor((e.touches[0].clientX / window.screen.width) * 180),
+      Math.floor((1 - e.touches[0].clientX / window.screen.width) * 180),
       Math.floor(
         ((e.touches[0].clientY - containerRef.current.offsetTop) /
           containerRef.current.clientHeight) *
-          180
+          200
       )
     ]);
   };
@@ -115,25 +115,23 @@ export default function Form() {
 
   return (
     <Fragment>
-      <div>
+      {/* <div>
         <h1>TEST!!!!</h1>
         <form onSubmit={onSubmit}>
           <input id="m" type="text" onChange={onChange} />
           <input type="submit" />
         </form>
-
-        {/* <Chat io={io} chatContent={chatContent} /> */}
-      </div>
+      </div> */}
       <div
-        style={{ backgroundColor: 'red', width: '100vw', height: '250px' }}
+        className="touch-area"
         ref={containerRef}
         onTouchStart={onTouchStart}
         onTouchMove={debounce(onMouseMove)}
         onTouchEnd={onTouchEnd}
       >
-        <div>{`X position : ${mouseposi[0]}`}</div>
-        <div>{`Y position : ${mouseposi[1]}`}</div>
-        <div>{`Laser gun : ${touchOn}`}</div>
+        <p>{`X position : ${mouseposi[0]}`}</p>
+        <p>{`Y position : ${mouseposi[1]}`}</p>
+        <p>{`Laser gun : ${touchOn}`}</p>
       </div>
     </Fragment>
   );
