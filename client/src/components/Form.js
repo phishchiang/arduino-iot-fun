@@ -12,9 +12,9 @@ export default function Form() {
 
   const containerRef = useRef(null);
 
-  // let ENDPOINT = 'localhost:5000';
+  let ENDPOINT = 'localhost:5000';
   // Init Setup
-  let ENDPOINT = '192.168.0.51:5000';
+  // let ENDPOINT = '192.168.0.111:5000';
 
   const connectWebSocket = () => {
     //開啟
@@ -97,7 +97,7 @@ export default function Form() {
     // io.emit('IOT_in', touchOn);
   };
 
-  const debounce = (func, wait = 100, immediate = true) => {
+  const debounce = (func, wait = 1000, immediate = true) => {
     var timeout;
     return function() {
       var context = this,
