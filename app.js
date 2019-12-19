@@ -1,12 +1,12 @@
-const app = require('express')();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
-const path = require('path');
-const cors = require('cors');
+const app = require("express")();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const path = require("path");
+const cors = require("cors");
 
-const five = require('johnny-five');
+const five = require("johnny-five");
 const board = new five.Board();
-let allMsg = ['Server msg'];
+let allMsg = ["Server msg"];
 let servo_10_turn = 0;
 
 const debounce = (func, wait = 100, immediate = true) => {
@@ -25,8 +25,8 @@ const debounce = (func, wait = 100, immediate = true) => {
   };
 };
 
-board.on('ready', function() {
-  const potentiometer = new five.Sensor('A3');
+board.on("ready", function() {
+  const potentiometer = new five.Sensor("A3");
 
   const servo_10 = new five.Servo(10);
   const servo_11 = new five.Servo(11);
@@ -42,10 +42,10 @@ board.on('ready', function() {
   // led.blink(500);
   led.toggle();
 
-  io.on('connection', function(socket) {
+  io.on("connection", function(socket) {
     connections.push(socket);
     console.log(`${socket.id} connected`);
-    io.emit('All', allMsg);
+    io.emit("All", allMsg);
 
     // potentiometer.on('change', () => {
     //   // console.log('  value  : ', potentiometer.value);
@@ -53,7 +53,7 @@ board.on('ready', function() {
     //   io.emit('All', potentiometer.value);
     // });
 
-    socket.on('IOT_in', data => {
+    socket.on("IOT_in", data => {
       // console.log(`${socket.id} said : ${data[0]}`);
       allMsg = data;
       console.log(allMsg);
@@ -65,16 +65,16 @@ board.on('ready', function() {
       }
       // servo.to(data[0]);
 
-      io.emit('All', allMsg);
+      io.emit("All", allMsg);
     });
 
-    socket.on('IOT_in_02', data => {
+    socket.on("IOT_in_02", data => {
       console.log(data[1]);
       servo_10.to(data[0]);
       servo_11.to(data[1]);
     });
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       console.log(`${socket.id} is gone`);
     });
   });
@@ -85,20 +85,20 @@ app.use(cors());
 users = [];
 connections = [];
 
-app.get('/client', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
+app.get("/client", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "index.html"));
 });
 
 // Server static assets in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   // Set static folder
-  app.use(express.static('client/build'));
+  app.use(express.static("client/build"));
 
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"))
   );
 }
 
 http.listen(5000, function() {
-  console.log('listening on *:5000');
+  console.log("listening on *:5000");
 });
